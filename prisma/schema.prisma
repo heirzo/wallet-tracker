@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("NEXT_PUBLIC_SUPABASE_URL")
+  directUrl = env("NEXT_PUBLIC_SUPABASE_URL")
+}
+
+model whales {
+  walletname String @id @db.Text
+  address    String @unique @db.Text
+}
+
+model balances {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  wallet_address String   @db.Text
+  balance_sol    Decimal  @db.Decimal(20, 8)
+  balance_usd    Decimal  @db.Decimal(20, 8)
+  captured_at    DateTime @db.Timestamptz()
+}
+
+model tx {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  wallet_address    String   @db.Text
+  signature         String   @unique @db.Text
+  ts                DateTime @db.Timestamptz()
+  native_change_sol Decimal  @db.Decimal(20, 8)
+  fee_sol           Decimal  @db.Decimal(20, 8)
+  raw               Json     @db.JsonB
+}
+
+model price_feed {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  price_usd  Decimal  @db.Decimal(20, 8)
+  fetched_at DateTime @db.Timestamptz()
+}
