@@ -25,14 +25,17 @@ export default function WalletTable({ period, selected, setSelected }: Props) {
   }, []);
 
   useEffect(() => {
+    if (!wallets.length) return;
     Promise.all(
       wallets.map(async (w) => {
-        const res = await fetch(`/api/wallets/${w.address}/summary?window=${period}`);
+        const res = await fetch(
+          `/api/wallets/${w.address}/summary?window=${period}`
+        );
         const { delta } = await res.json();
         return { ...w, delta };
       })
     ).then(setWallets);
-  }, [period, wallets.length]);
+  }, [period, wallets]); // ← ajout de wallets ici
 
   const toggle = (addr: string) =>
     setSelected(
@@ -65,7 +68,11 @@ export default function WalletTable({ period, selected, setSelected }: Props) {
             <td>{w.walletname}</td>
             <td>{w.balance_sol.toFixed(2)}</td>
             <td>${w.balance_usd.toFixed(2)}</td>
-            <td className={w.delta && w.delta > 0 ? 'text-green-400' : 'text-red-400'}>
+            <td
+              className={
+                w.delta && w.delta > 0 ? 'text-green-400' : 'text-red-400'
+              }
+            >
               {w.delta !== undefined && (
                 <>
                   {w.delta > 0 ? '↑' : '↓'} {Math.abs(w.delta).toFixed(2)}

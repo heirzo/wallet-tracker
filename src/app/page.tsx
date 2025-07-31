@@ -1,5 +1,4 @@
 'use client';
-import { useEffect, useState } from 'react';
 import WalletTable from '@/components/WalletTable';
 import WalletChart from '@/components/WalletChart';
 import PeriodSelector from '@/components/PeriodSelector';
