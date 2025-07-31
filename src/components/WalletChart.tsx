@@ -19,21 +19,21 @@ type Snapshot = {
   balance_sol: number;
 };
 
+type ChartDataset = {
+  label: string;
+  data: { x: string; y: number }[];
+  borderColor: string;
+  backgroundColor: string;
+  fill: boolean;
+};
+
 type Props = {
   selected: string[];
   period: '1d' | '7d' | '30d';
 };
 
 export default function WalletChart({ selected, period }: Props) {
-  const [datasets, setDatasets] = useState<
-    {
-      label: string;
-      data: { x: string; y: number }[];
-      borderColor: string;
-      backgroundColor: string;
-      fill: boolean;
-    }[]
-  >([]);
+  const [datasets, setDatasets] = useState<ChartDataset[]>([]);
 
   useEffect(() => {
     if (!selected.length) return setDatasets([]);
