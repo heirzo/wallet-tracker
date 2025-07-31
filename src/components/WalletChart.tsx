@@ -14,26 +14,39 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+type Snapshot = {
+  captured_at: string;
+  balance_sol: number;
+};
+
 type Props = {
   selected: string[];
   period: '1d' | '7d' | '30d';
 };
 
 export default function WalletChart({ selected, period }: Props) {
-  const [datasets, setDatasets] = useState<any[]>([]);
+  const [datasets, setDatasets] = useState<
+    {
+      label: string;
+      data: { x: string; y: number }[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[]
+  >([]);
 
   useEffect(() => {
     if (!selected.length) return setDatasets([]);
     Promise.all(
       selected.map(async (addr) => {
         const res = await fetch(`/api/wallets/${addr}/summary?window=${period}`);
-        const { snapshots } = await res.json();
+        const { snapshots }: { snapshots: Snapshot[] } = await res.json();
         const color = `hsl(${Math.random() * 360}, 70%, 60%)`;
         return {
           label: addr.slice(0, 6),
-          data: snapshots.map((s: any) => ({
+          data: snapshots.map((s) => ({
             x: new Date(s.captured_at).toLocaleString('fr-FR', { timeZone: 'Europe/Paris' }),
-            y: Number(s.balance_sol),
+            y: s.balance_sol,
           })),
           borderColor: color,
           backgroundColor: color,
